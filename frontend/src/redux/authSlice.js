@@ -19,16 +19,16 @@ const authSlice = createSlice({
 
     setUser: (state, action) => {
       state.user = {
-        ...action.payload.user,
-        favourites: action.payload.user?.favourites || [],
+        ...(action.payload.user || action.payload),
+        favourites:
+          action.payload.user?.favourites || action.payload?.favourites || [],
       };
 
-      state.token = action.payload.token;
-      state.isAuthenticated = true;
-
       if (action.payload.token) {
+        state.token = action.payload.token;
         localStorage.setItem("token", action.payload.token);
       }
+      state.isAuthenticated = true;
     },
 
     logout: (state) => {
@@ -49,7 +49,7 @@ const authSlice = createSlice({
       const song = action.payload;
 
       const exists = state.user.favourites.some(
-        (s) => s.id === song.id
+        (s) => String(s.id) === String(song.id)
       );
 
       if (!exists) {
@@ -60,8 +60,9 @@ const authSlice = createSlice({
     removeFavourite: (state, action) => {
       if (!state.user?.favourites) return;
 
+      const targetId = String(action.payload);
       state.user.favourites = state.user.favourites.filter(
-        (s) => s.id !== action.payload
+        (s) => String(s.id) !== targetId
       );
     },
 

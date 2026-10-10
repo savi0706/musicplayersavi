@@ -1,89 +1,58 @@
-import React from "react";
 import SongDetail from "../player/SongDetail";
 import ControlArea from "../player/ControlArea";
 import Features from "../player/Features";
 import "../../css/footer/Footer.css";
-import {
-  AiFillPlayCircle,
-  AiFillPauseCircle,
-  AiFillStepForward,
-  AiFillStepBackward,
-} from "react-icons/ai";
-import { IoMdVolumeHigh, IoMdVolumeOff } from "react-icons/io";
-import "../../css/footer/Footer.css";
 
 const Footer = ({
   currentSong,
-  isPlaying,
+  isPlaying = false,
+  currentTime = 0,
+  duration = 0,
   onPlayPause,
   onNext,
   onPrev,
+  onSeek,
   onMute,
-  volume,
+  volume = 1,
   onVolumeChange,
-  isMuted,
+  isMuted = false,
+  loopEnabled = false,
+  onToggleLoop,
+  shuffleEnabled = false,
+  onToggleShuffle,
+  playbackSpeed = 1,
+  onChangeSpeed,
+  isFavourite = false,
+  onToggleFavourite,
 }) => {
   return (
-    <footer className="footer-root">
-      {/* SONG INFO */}
-      <div className="footer-left">
-        {currentSong ? (
-          <>
-            <img
-              src={currentSong.image}
-              alt={currentSong.name}
-              className="footer-song-image"
-            />
-            <div>
-              <p className="footer-song-name">{currentSong.name}</p>
-              <p className="footer-song-artist">
-                {currentSong.artist_name}
-              </p>
-            </div>
-          </>
-        ) : (
-          <p>No song selected</p>
-        )}
-      </div>
+    <footer className="footer-root footer-glow">
+      <SongDetail currentSong={currentSong} />
 
-      {/* PLAYER CONTROLS */}
-      <div className="footer-center">
-        <button onClick={onPrev}>
-          <AiFillStepBackward size={26} />
-        </button>
+      <ControlArea
+        isPlaying={isPlaying}
+        currentTime={currentTime}
+        duration={duration}
+        onPlayPause={onPlayPause}
+        onNext={onNext}
+        onPrev={onPrev}
+        onSeek={onSeek}
+        isFavourite={isFavourite}
+        onToggleFavourite={onToggleFavourite}
+      />
 
-        <button onClick={onPlayPause}>
-          {isPlaying ? (
-            <AiFillPauseCircle size={42} />
-          ) : (
-            <AiFillPlayCircle size={42} />
-          )}
-        </button>
-
-        <button onClick={onNext}>
-          <AiFillStepForward size={26} />
-        </button>
-      </div>
-
-      {/* VOLUME CONTROLS */}
-      <div className="footer-right">
-        <button onClick={onMute}>
-          {isMuted || volume === 0 ? (
-            <IoMdVolumeOff size={24} />
-          ) : (
-            <IoMdVolumeHigh size={24} />
-          )}
-        </button>
-
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          value={volume}
-          onChange={(e) => onVolumeChange(Number(e.target.value))}
-        />
-      </div>
+      <Features
+        isMuted={isMuted}
+        onMute={onMute}
+        volume={volume}
+        onVolumeChange={onVolumeChange}
+        shuffleEnabled={shuffleEnabled}
+        onToggleShuffle={onToggleShuffle}
+        loopEnabled={loopEnabled}
+        onToggleLoop={onToggleLoop}
+        playbackSpeed={playbackSpeed}
+        onChangeSpeed={onChangeSpeed}
+      />
     </footer>
   );
 };

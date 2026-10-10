@@ -13,6 +13,8 @@ const MainArea = ({
   onSongSelect,
   searchQuery,
   setSearchQuery,
+  onSelectPlaylist,
+  selectedTag,
 }) => {
   const auth = useSelector((state) => state.auth);
 
@@ -22,7 +24,12 @@ const MainArea = ({
       <div className="mainarea-top">
         <Auth />
 
-        {view === "home" && <Playlist />}
+        {view === "home" && (
+          <Playlist
+            onSelectPlaylist={onSelectPlaylist}
+            selectedTag={selectedTag}
+          />
+        )}
 
         {view === "search" && (
           <SearchBar

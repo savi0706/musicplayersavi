@@ -69,9 +69,17 @@ const SideMenu = ({ setView, view }) => {
 
       {/* Profile Section */}
       <div className="sidemenu-profile-row">
-        <div className="profile-placeholder">
-          <CiUser size={30} />
-        </div>
+        {user?.avatar ? (
+          <img
+            src={user.avatar}
+            alt={user.name || "User"}
+            className="sidemenu-avatar-img"
+          />
+        ) : (
+          <div className="profile-placeholder">
+            <CiUser size={30} />
+          </div>
+        )}
 
         <div className="sidemenu-username-wrapper">
           {isAuthenticated ? (
@@ -97,7 +105,18 @@ const SideMenu = ({ setView, view }) => {
           )}
         </div>
 
-        <button className="sidemenu-settings-btn">
+        <button
+          className="sidemenu-settings-btn"
+          title="Settings"
+          aria-label="Settings"
+          onClick={() => {
+            if (isAuthenticated) {
+              alert(`Logged in as: ${user?.name || "User"} (${user?.email || ""})`);
+            } else {
+              dispatch(openAuthModal("login"));
+            }
+          }}
+        >
           <IoIosSettings size={20} />
         </button>
       </div>

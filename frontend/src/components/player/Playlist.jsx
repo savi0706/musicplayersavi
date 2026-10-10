@@ -1,7 +1,7 @@
 import React from "react";
 import "../../css/mainArea/Playlist.css";
 
-const Playlist = () => {
+const Playlist = ({ onSelectPlaylist, selectedTag }) => {
   const items = [
     {
       id: 1,
@@ -37,7 +37,16 @@ const Playlist = () => {
       <div className="playlist-wrapper">
         <div className="playlist-grid">
           {items.map((item) => (
-            <div className="playlist-card" key={item.id}>
+            <div
+              className={`playlist-card ${selectedTag === item.label.toLowerCase() ? "active" : ""}`}
+              key={item.id}
+              onClick={() =>
+                onSelectPlaylist && onSelectPlaylist(item.label.toLowerCase())
+              }
+              style={{ cursor: "pointer" }}
+              role="button"
+              tabIndex={0}
+            >
               <img src={item.img} alt={item.label} className="playlist-image" />
               <h4 className="playlist-label">{item.label}</h4>
             </div>

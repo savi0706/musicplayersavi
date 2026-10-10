@@ -96,7 +96,13 @@ const useAudioPlayer = (songs = []) => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    audio.src = song.url;
+    const audioSrc = song.audio || song.url;
+    if (!audioSrc) {
+      console.warn("Selected track has no audio source URL:", song);
+      return;
+    }
+
+    audio.src = audioSrc;
     audio.load();
 
     audio.volume = audioState.volume;
@@ -116,11 +122,16 @@ const useAudioPlayer = (songs = []) => {
     const audio = audioRef.current;
     if (!audio) return;
 
+    if (audioState.currentIndex === null && songs.length > 0) {
+      playSongAtIndex(0);
+      return;
+    }
+
     if (audio.paused) {
       audio
         .play()
         .then(() => dispatch({ type: "PLAY" }))
-        .catch(() => {});
+        .catch((err) => console.error("Play error:", err));
     } else {
       audio.pause();
       dispatch({ type: "PAUSE" });
@@ -135,6 +146,8 @@ const useAudioPlayer = (songs = []) => {
 
     if (audioState.shuffleEnabled) {
       nextIndex = Math.floor(Math.random() * songs.length);
+    } else if (audioState.currentIndex === null) {
+      nextIndex = 0;
     } else {
       nextIndex =
         audioState.currentIndex + 1 >= songs.length
@@ -149,12 +162,29 @@ const useAudioPlayer = (songs = []) => {
   const handlePrev = () => {
     if (!songs.length) return;
 
-    let prevIndex =
-      audioState.currentIndex - 1 < 0
-        ? songs.length - 1
-        : audioState.currentIndex - 1;
+    let prevIndex;
+    if (audioState.currentIndex === null || audioState.currentIndex <= 0) {
+      prevIndex = songs.length - 1;
+    } else {
+      prevIndex = audioState.currentIndex - 1;
+    }
 
     playSongAtIndex(prevIndex);
+  };
+
+  /* ================= TIME & METADATA LISTENERS ================= */
+  const handleTimeUpdate = () => {
+    const audio = audioRef.current;
+    if (audio) {
+      dispatch({ type: "SET_CURRENT_TIME", payload: audio.currentTime || 0 });
+    }
+  };
+
+  const handleLoadedMetadata = () => {
+    const audio = audioRef.current;
+    if (audio && !isNaN(audio.duration)) {
+      setDuration(audio.duration);
+    }
   };
 
   /* ================= SONG ENDED ================= */
@@ -246,6 +276,8 @@ const useAudioPlayer = (songs = []) => {
     handleChangeVolume,
     handleSeek,
     handleChangeSpeed,
+    handleTimeUpdate,
+    handleLoadedMetadata,
 
     /* Toggle buttons */
     toggleLoop: () => dispatch({ type: "TOGGLE_LOOP" }),
