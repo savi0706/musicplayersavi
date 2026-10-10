@@ -10,7 +10,8 @@ dotenv.config();
 const PORT = process.env.PORT || 5000;
 
 const app = express();
-app.use(express.json());
+// Limit to 10 MB – accommodates base64-encoded avatars (≤5 MB raw) with margin
+app.use(express.json({ limit: "10mb" }));
 
 connectDB();
 const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";

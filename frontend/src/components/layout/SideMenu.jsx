@@ -1,5 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { IoIosSettings } from "react-icons/io";
 import { CiUser } from "react-icons/ci";
 import { AiOutlineHome, AiOutlineSearch, AiOutlineHeart } from "react-icons/ai";
@@ -12,6 +13,7 @@ import "../../css/sidemenu/SideMenu.css";
 
 const SideMenu = ({ setView, view }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user, isAuthenticated } = useSelector((state) => state.auth);
 
   const getNavBtnClass = (item) =>
@@ -88,12 +90,32 @@ const SideMenu = ({ setView, view }) => {
                 {user?.name || "User"}
               </div>
 
-              <button
-                className="logout-btn"
-                onClick={handleLogout}
-              >
-                Logout
-              </button>
+              <div style={{ display: "flex", gap: "8px", marginTop: "4px" }}>
+                <button
+                  type="button"
+                  className="sidemenu-edit-btn"
+                  onClick={() => navigate("/edit-profile")}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "#a855f7",
+                    fontSize: "12px",
+                    cursor: "pointer",
+                    textDecoration: "underline",
+                    padding: 0,
+                  }}
+                >
+                  Edit Profile
+                </button>
+
+                <button
+                  type="button"
+                  className="logout-btn"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
+              </div>
             </>
           ) : (
             <button
@@ -111,7 +133,7 @@ const SideMenu = ({ setView, view }) => {
           aria-label="Settings"
           onClick={() => {
             if (isAuthenticated) {
-              alert(`Logged in as: ${user?.name || "User"} (${user?.email || ""})`);
+              navigate("/edit-profile");
             } else {
               dispatch(openAuthModal("login"));
             }

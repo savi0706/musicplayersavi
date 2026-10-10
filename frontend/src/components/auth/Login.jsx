@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser, setError, setLoading } from "../../redux/authSlice";
 import { closeAuthModal } from "../../redux/uiSlice";
@@ -7,6 +8,7 @@ import { closeAuthModal } from "../../redux/uiSlice";
 import "../../css/auth/Auth.css";
 
 const Login = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isLoading, error } = useSelector((s) => s.auth);
 
@@ -39,6 +41,11 @@ const Login = () => {
     }
   };
 
+  const handleForgotPassword = () => {
+    dispatch(closeAuthModal());
+    navigate("/forgot-password");
+  };
+
   return (
     <form className="auth-form" onSubmit={handleLogin}>
       <h2 className="auth-title">Welcome Back</h2>
@@ -58,6 +65,24 @@ const Login = () => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
+
+      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "-6px" }}>
+        <button
+          type="button"
+          onClick={handleForgotPassword}
+          style={{
+            background: "none",
+            border: "none",
+            color: "#a855f7",
+            fontSize: "13px",
+            cursor: "pointer",
+            textDecoration: "underline",
+            padding: 0,
+          }}
+        >
+          Forgot password?
+        </button>
+      </div>
 
       {error && <p className="auth-error">{error}</p>}
 

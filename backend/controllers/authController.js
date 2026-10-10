@@ -77,14 +77,14 @@ const login = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({
-        message: "Email does not exist",
+        message: "Invalid email or password",
       });
     }
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       return res.status(400).json({
-        message: "Invalid credentials",
+        message: "Invalid email or password",
       });
     }
 
@@ -121,9 +121,12 @@ const forgotPassword = async (req, res) => {
       return res.status(400).json({ message: "Email is required" });
     }
 
+    const genericMessage =
+      "If an account with that email address exists, password reset instructions have been sent.";
+
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ message: "No user found" });
+      return res.status(200).json({ message: genericMessage });
     }
 
     const resetToken = crypto.randomBytes(32).toString("hex");
@@ -140,18 +143,22 @@ const forgotPassword = async (req, res) => {
     const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
     const resetUrl = `${clientUrl}/reset-password/${resetToken}`;
 
-    await sendMail({
-      to: user.email,
-      subject: "Reset your password",
-      html: `
-        <h3>Password Reset</h3>
-        <p>Click the link below to reset your password</p>
-        <a href="${resetUrl}">${resetUrl}</a>
-        <p>This link expires in 10 minutes</p>
-      `,
-    });
+    try {
+      await sendMail({
+        to: user.email,
+        subject: "Reset your password",
+        html: `
+          <h3>Password Reset</h3>
+          <p>Click the link below to reset your password</p>
+          <a href="${resetUrl}">${resetUrl}</a>
+          <p>This link expires in 10 minutes</p>
+        `,
+      });
+    } catch (mailError) {
+      console.error("Email delivery failed (check SMTP settings):", mailError.message);
+    }
 
-    res.status(200).json({ message: "Password reset email sent" });
+    res.status(200).json({ message: genericMessage });
   } catch (error) {
     console.error("Forgot password error:", error.message);
     res.status(500).json({ message: "Forgot password error" });
