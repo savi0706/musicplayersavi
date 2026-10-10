@@ -6,16 +6,17 @@ import router from "./routes/authRoutes.js";
 import songRouter from "./routes/songRouters.js";
 
 
-dotenv.config(".env");
-const PORT = process.env.PORT || 5001;
+dotenv.config();
+const PORT = process.env.PORT || 5000;
 
 const app = express();
 app.use(express.json());
 
 connectDB();
+const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [clientUrl, "http://localhost:5173", "http://localhost:5174", "http://localhost:3000"],
     credentials: true,
   })
 );

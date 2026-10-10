@@ -2,10 +2,17 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
 const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, "Name is required"],
+    trim: true,
+  },
   email: {
     type: String,
     required: [true, "Email is required"],
     unique: true,
+    lowercase: true,
+    trim: true,
   },
   password: {
     type: String,
@@ -16,20 +23,19 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+  favourites: [
+    {
+      id: { type: String, required: true },
+      name: String,
+      artist_name: String,
+      image: String,
+      duration: String,
+      audio: String,
+    },
+  ],
   resetPasswordToken: String,
   resetPasswordTokenExpires: Date,
 });
-
-favourites: [
-  {
-    id: { type: String, required: true },
-    name: String,
-    artist_name: String,
-    image: String,
-    duration: String,
-    audio: String,
-  },
-],
 
 
 // Pre-save function for password

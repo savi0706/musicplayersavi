@@ -96,6 +96,8 @@ const login = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        avatar: user.avatar || "",
+        favourites: user.favourites || [],
       },
       token,
     });
@@ -135,7 +137,8 @@ const forgotPassword = async (req, res) => {
     user.resetPasswordTokenExpires = Date.now() + 10 * 60 * 1000;
     await user.save();
 
-    const resetUrl = `http://localhost:3000/reset-password/${resetToken}`;
+    const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+    const resetUrl = `${clientUrl}/reset-password/${resetToken}`;
 
     await sendMail({
       to: user.email,

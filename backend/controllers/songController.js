@@ -65,14 +65,26 @@ const toggleFavourite = async (req, res) => {
       });
     }
 
+    if (!user.favourites) {
+      user.favourites = [];
+    }
+
+    const songIdStr = String(song.id);
     const index = user.favourites.findIndex(
-      (fav) => fav.id === song.id
+      (fav) => String(fav.id) === songIdStr
     );
 
     if (index !== -1) {
       user.favourites.splice(index, 1);
     } else {
-      user.favourites.push(song);
+      user.favourites.push({
+        id: songIdStr,
+        name: song.name || "Unknown Track",
+        artist_name: song.artist_name || "Unknown Artist",
+        image: song.image || "",
+        duration: String(song.duration || ""),
+        audio: song.audio || song.url || "",
+      });
     }
 
     await user.save();
