@@ -69,13 +69,14 @@ function audioReducer(state, action) {
 }
 
 /* ================= HOOK ================= */
-const useAudioPlayer = (songs = []) => {
+const useAudioPlayer = (songs = [], externalAudioRef = null) => {
   const [audioState, dispatch] = useReducer(
     audioReducer,
     initialAudioState
   );
 
-  const audioRef = useRef(null);
+  const internalAudioRef = useRef(null);
+  const audioRef = externalAudioRef || internalAudioRef;
   const previousVolumeRef = useRef(1);
   const [duration, setDuration] = useState(0);
 
@@ -248,9 +249,6 @@ const useAudioPlayer = (songs = []) => {
   };
 
   return {
-    /* Audio Ref */
-    audioRef,
-
     /* Song State */
     currentIndex: audioState.currentIndex,
     currentSong: audioState.currentSong,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Footer from "../components/layout/Footer";
 import SideMenu from "../components/layout/SideMenu";
@@ -109,7 +109,8 @@ const Homepage = () => {
       .includes(searchQuery.toLowerCase())
   );
 
-  const audioPlayer = useAudioPlayer(songList);
+  const audioRef = useRef(null);
+  const audioPlayer = useAudioPlayer(songList, audioRef);
 
   const handleSongSelect = (index, currentList = songList) => {
     const selected = currentList[index];
@@ -126,7 +127,7 @@ const Homepage = () => {
     <div className="homepage-root">
       {/* AUDIO ELEMENT */}
       <audio
-        ref={audioPlayer.audioRef}
+        ref={audioRef}
         onTimeUpdate={audioPlayer.handleTimeUpdate}
         onLoadedMetadata={audioPlayer.handleLoadedMetadata}
         onEnded={audioPlayer.handleEnded}
